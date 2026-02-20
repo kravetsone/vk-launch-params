@@ -76,3 +76,31 @@ export function verifyAndParseLaunchParams(
 		? parseLaunchParams(queryStringRaw)
 		: false;
 }
+
+/**
+ * Генерирует подписанную строку параметров запуска VK Mini App.
+ * Принимает объект параметров (без `sign`) и возвращает query-строку с вычисленным `sign`.
+ */
+export function signLaunchParams(
+	params: Omit<LaunchParams, "sign">,
+	secretKey: string,
+): string {
+	const urlParams = new URLSearchParams();
+
+	for (const [key, value] of Object.entries(params)) {
+		if (value !== undefined)
+			urlParams.set(
+				key,
+				typeof value === "boolean" ? (value ? "1" : "0") : String(value),
+			);
+	}
+
+	const queryString = Array.from(urlParams.entries())
+		.sort(([a], [b]) => a.localeCompare(b))
+		.map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+		.join("&");
+
+	const sign = sha256Hash(secretKey, queryString);
+
+	return `${queryString}&sign=${sign}`;
+}

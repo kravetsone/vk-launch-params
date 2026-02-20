@@ -1,6 +1,6 @@
 {
 	"name": "vk-launch-params",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"description": "server-side helpers for verify/parse vk launch-params",
 	"keywords": ["vk", "launch-params", "init-data", "vk-io"],
 	"homepage": "https://github.com/kravetsone/vk-launch-params",

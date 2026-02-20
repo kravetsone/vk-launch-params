@@ -13,6 +13,7 @@ import {
     verifyAndParseLaunchParams,
     verifyLaunchParams,
     parseLaunchParams,
+    signLaunchParams,
 } from "vk-launch-params";
 
 const launchParams =
@@ -38,4 +39,36 @@ if (!result) {
 
 const isValid = verifyLaunchParams(launchParams, APP_SECRET_KEY);
 const parsedButUnsafe = parseLaunchParams(launchParams);
+```
+
+## Генерация подписанных параметров
+
+`signLaunchParams` полезен для тестирования — генерирует валидную подписанную query-строку из объекта параметров.
+
+```ts
+import { signLaunchParams, verifyLaunchParams } from "vk-launch-params";
+
+const APP_SECRET_KEY = "wvl68m4dR1UpLrVRli";
+
+const signed = signLaunchParams(
+    {
+        vk_user_id: 494075,
+        vk_app_id: 6736218,
+        vk_is_app_user: true,
+        vk_are_notifications_enabled: true,
+        vk_language: "ru",
+        vk_access_token_settings: "",
+        vk_platform: "mobile_android",
+        vk_is_favorite: false,
+        vk_ref: "other",
+        vk_ts: 1234567890,
+    },
+    APP_SECRET_KEY,
+);
+
+// "vk_access_token_settings=&vk_app_id=6736218&...&sign=<computed>"
+console.log(signed);
+
+// true
+console.log(verifyLaunchParams(signed, APP_SECRET_KEY));
 ```
