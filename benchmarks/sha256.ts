@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { bench, run, summary } from "mitata";
+import { barplot, bench, boxplot, lineplot, run, summary } from "mitata";
 
 const queryString =
 	"?vk_user_id=494075&vk_app_id=6736218&vk_is_app_user=1&vk_are_notifications_enabled=1&vk_language=ru&vk_access_token_settings=&vk_platform=android&sign=htQFduJpLxz7ribXRZpDFUH-XEUhC9rBPTJkjUFEkRA";
@@ -7,26 +7,28 @@ const queryString =
 const secretToken = "wvl68m4dR1UpLrVRli";
 const IS_BUN = typeof Bun !== "undefined";
 
-summary(() => {
-	bench("sha256", () => {
-		crypto
-			.createHmac("sha256", secretToken)
-			.update(queryString)
-			.digest("base64");
-	});
-
-	if (IS_BUN)
-		bench("Bun.CryptoHasher", () => {
-			new Bun.CryptoHasher("sha256", secretToken)
+barplot(() => {
+	summary(() => {
+		bench("sha256", () => {
+			crypto
+				.createHmac("sha256", secretToken)
 				.update(queryString)
 				.digest("base64");
 		});
-	// bench("verifyLaunchParams", () => {
-	// 	verifyLaunchParams(queryString, secretToken);
-	// });
-	// bench("parseLaunchParams", () => {
-	// 	parseLaunchParams(queryString);
-	// });
+
+		if (IS_BUN)
+			bench("Bun.CryptoHasher", () => {
+				new Bun.CryptoHasher("sha256", secretToken)
+					.update(queryString)
+					.digest("base64");
+			});
+		// bench("verifyLaunchParams", () => {
+		// 	verifyLaunchParams(queryString, secretToken);
+		// });
+		// bench("parseLaunchParams", () => {
+		// 	parseLaunchParams(queryString);
+		// });
+	});
 });
 
 await run();
